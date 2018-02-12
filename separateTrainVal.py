@@ -1,8 +1,10 @@
 import argparse
 import os
+import random
+from shutil import copyfile
 
 print("separateTrainVal.py")
-
+random.seed(0)
 
 
 parser = argparse.ArgumentParser()
@@ -53,15 +55,32 @@ for categoryDirectory in args.categoryDirectories:
 
     print ("separateTrainVal.py: categoryName = {}".format(categoryName))
     trainCategoryDirectory = trainDirectory + '/' + categoryName
+    valCategoryDirectory = valDirectory + '/' + categoryName
     if not os.path.exists(trainCategoryDirectory):
         os.mkdir(trainCategoryDirectory)
-    if args.removeFilesInDestinationDirectory:
+    if not os.path.exists(valCategoryDirectory):
+        os.mkdir(valCategoryDirectory)
+    if args.removeFilesInDestinationDirectory: # Remove the existing files
         files = [f for f in os.listdir(trainCategoryDirectory) if os.path.isfile(os.path.join(trainCategoryDirectory, f))]
         for file in files:
             filepath = trainCategoryDirectory + '/' + file
             print("separateTrainVal.py: File to remove: {}".format(filepath))
             os.remove(filepath)
 
-    valCategoryDirectory = valDirectory + '/' + categoryName
-    if not os.path.exists(valCategoryDirectory):
-        os.mkdir(valCategoryDirectory)
+        files = [f for f in os.listdir(valCategoryDirectory) if
+                 os.path.isfile(os.path.join(valCategoryDirectory, f))]
+        for file in files:
+            filepath = valCategoryDirectory + '/' + file
+            print("separateTrainVal.py: File to remove: {}".format(filepath))
+            os.remove(filepath)
+
+    # Loop through the files in the origin category directories
+    originFiles = [f for f in os.listdir(categoryDirectory) if os.path.isfile(os.path.join(categoryDirectory, f))]
+    for originFile in originFiles:
+        randomDraw = random.random()
+        if randomDraw < args.validationProbability: # Validation
+            destinationFilepath = valCategoryDirectory + '/' + os.path.basename(originFile)
+            copyfile( os.path.join(categoryDirectory, originFile), destinationFilepath)
+        else: # Train
+            destinationFilepath = trainCategoryDirectory + '/' + os.path.basename(originFile)
+            copyfile(os.path.join(categoryDirectory, originFile), destinationFilepath)
