@@ -3,6 +3,8 @@ import os
 
 print("separateTrainVal.py")
 
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('categoryDirectories', nargs='+', type=str,
                     help='The directories where the categories can be found')
@@ -10,7 +12,8 @@ parser.add_argument('validationProbability', type=float,
                     help='The probability of putting a file in the validation folder, [0, 1]')
 parser.add_argument('destinationDirectory', type=str,
                     help='The destination directory. It must exist. It will contain train/ and val/ which will contain as many directories as the number of classes')
-parser.add_argument('removeFilesInDestinationDirectory', type=bool,
+parser.add_argument('--removeFilesInDestinationDirectory', dest='removeFilesInDestinationDirectory',
+                    default=False, action='store_true',
                     help='Before copying the files in the destination directories, delete all the files that are already there')
 
 
@@ -29,6 +32,9 @@ if args.validationProbability < 0 or args.validationProbability > 1:
 # Check if the destination directory exists
 if not os.path.isdir(args.destinationDirectory):
     raise NotADirectoryError("separateTrainVal.py: The destination directory '{}' doesn't exist".format(args.destinationDirectory))
+
+print("args.removeFilesInDestinationDirectory = {}".format(args.removeFilesInDestinationDirectory))
+
 
 # Create train/ and val/ directories
 trainDirectory = args.destinationDirectory + '/train'
@@ -49,6 +55,12 @@ for categoryDirectory in args.categoryDirectories:
     trainCategoryDirectory = trainDirectory + '/' + categoryName
     if not os.path.exists(trainCategoryDirectory):
         os.mkdir(trainCategoryDirectory)
+    if args.removeFilesInDestinationDirectory:
+        files = [f for f in os.listdir(trainCategoryDirectory) if os.path.isfile(os.path.join(trainCategoryDirectory, f))]
+        for file in files:
+            filepath = trainCategoryDirectory + '/' + file
+            print("separateTrainVal.py: File to remove: {}".format(filepath))
+            os.remove(filepath)
 
     valCategoryDirectory = valDirectory + '/' + categoryName
     if not os.path.exists(valCategoryDirectory):
