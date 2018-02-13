@@ -38,15 +38,15 @@ if not os.path.isdir(args.destinationDirectory):
 print("args.removeFilesInDestinationDirectory = {}".format(args.removeFilesInDestinationDirectory))
 
 
-# Create train/ and val/ directories
+# Create train/ and valid/ directories
 trainDirectory = args.destinationDirectory + '/train'
 if not os.path.exists(trainDirectory):
     os.mkdir(trainDirectory)
-valDirectory = args.destinationDirectory + '/val'
+valDirectory = args.destinationDirectory + '/valid'
 if not os.path.exists(valDirectory):
     os.mkdir(valDirectory)
 
-# Create train/class0/, train/class1/, ... and val/class0, val/class1, ... directories
+# Create train/class0/, train/class1/, ... and valid/class0, valid/class1, ... directories
 for categoryDirectory in args.categoryDirectories:
     # Remove trailing slash
     if categoryDirectory[-1] == '/':
