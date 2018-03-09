@@ -13,7 +13,7 @@ parser.add_argument('categoryDirectories', nargs='+', type=str,
 parser.add_argument('validationProbability', type=float,
                     help='The probability of putting a file in the validation folder, [0, 1]')
 parser.add_argument('destinationDirectory', type=str,
-                    help='The destination directory. It must exist. It will contain train/ and val/ which will contain as many directories as the number of classes')
+                    help='The destination directory. It must exist. It will contain train/ and valid/ which will contain as many directories as the number of classes')
 parser.add_argument('--removeFilesInDestinationDirectory', dest='removeFilesInDestinationDirectory',
                     default=False, action='store_true',
                     help='Before copying the files in the destination directories, delete all the files that are already there')
